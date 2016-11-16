@@ -1,7 +1,7 @@
 # Simple H264 Decoder
 
-This is a simple C++ h264 stream decoder. It is quite fast and more importantly, does not require any other libs to compile/use. The idea is to be easy to use and import to your project, without all the problems of seting up a larger lib like ffstream, gstreamer or libvlc.
-
+This is a simple C++ h264 stream decoder. It is quite fast and more importantly, does not require any other libs to compile/use. The idea is to be easy to use and import to your project, without all the problems of seting up a larger lib like ffstream, gstreamer or libvlc. You just need to compile, add the Decoder.h header (which contains all the interface that you need) and link the libmeerkat_h264_decoder lib.
+.w
 The idea came from a project that imported the h264 decoder to JavaScript called [Broadway][Broadway_site], which is quite amazing. They used the decoder code from the [Android project][Android_src], but they did an abstraction layer on top (you'll see on all the functions calls that start with broadway). We've used this abstraction layer to make things even easier, but with some small changes for our purpose.
 
 We also will add a python wrapper for this lib, which is quite easy to use and compile. However you'll need OpenCV 3.1 and Boost.
@@ -16,7 +16,6 @@ Hope you like it :)
 This was done on a real tight deadline, so there are some problems/limitations that you must be aware. Some of them:
 
 * The video must be in color
-* There are some global variables on Decoder.c that will be a problem when generating a shared lib. It needs to be refactored ASAP!
 * The code interface should be improved
 
 ### Compilation
@@ -30,7 +29,7 @@ $ cmake ..
 $ make
 ```
 
-To compile the test file (it needs OpenCV to generate a RGB image and plot on the screen):
+To compile the test program (it needs OpenCV to generate a RGB image and plot on the screen):
 
 ```sh
 $ cd test
@@ -38,6 +37,12 @@ $ mkdir build
 $ cd build
 $ cmake ..
 $ make
+```
+
+Usage example:
+
+```sh
+$ ./h264_test ../../data/video_full.avi
 ```
 
 [Broadway_site]: <https://github.com/mbebenita/Broadway>
