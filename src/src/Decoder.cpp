@@ -62,7 +62,7 @@ u32 Stream::Init() {
     return -1;
   }
 
-  picDecodeNumber = picDisplayNumber = 1;
+  picDecodeNumber = 1;
   return 0;
 }
 
@@ -100,9 +100,7 @@ StreamStatus Stream::BroadwayDecode() {
         case H264SWDEC_PIC_RDY:
             picDecodeNumber++;
       
-            while (H264SwDecNextPicture(decInst, &decPicture, 0) == H264SWDEC_PIC_RDY) {
-                // picDisplayNumber++;
-            }
+            while (H264SwDecNextPicture(decInst, &decPicture, 0) == H264SWDEC_PIC_RDY) { }
 
             break;
 
@@ -118,6 +116,7 @@ StreamStatus Stream::BroadwayDecode() {
 
     switch (ret) {
         case H264SWDEC_HDRS_RDY_BUFF_NOT_EMPTY:
+        case H264SWDEC_OK:
             status = HEADERS_READY;
             break;
 
@@ -133,8 +132,8 @@ StreamStatus Stream::BroadwayDecode() {
             break;
 
         case H264SWDEC_STRM_ERR:
+        default:
             status = STREAM_ERROR;
-            break;
     }
 
 

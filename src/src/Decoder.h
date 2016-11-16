@@ -43,7 +43,6 @@ private:
     H264SwDecInfo decInfo;
 
     u32 picDecodeNumber;
-    u32 picDisplayNumber;
     u32 picSize;
 };
 
