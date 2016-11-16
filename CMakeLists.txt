@@ -39,7 +39,7 @@ file(GLOB all_h264_decoder_src
 	"src/src/h264bsd_decoder.c"
 	"src/src/H264SwDecApi.c"
 	"src/src/extraFlags.c"
-	"src/src/Decoder.c"
+	"src/src/Decoder.cpp"
 )
 
 add_library( meerkat_h264_decoder SHARED

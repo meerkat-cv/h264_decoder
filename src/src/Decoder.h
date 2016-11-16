@@ -1,3 +1,4 @@
+extern "C" {
 #include "H264SwDecApi.h"
 
 #include <stdio.h>
@@ -11,35 +12,33 @@
 
 #include "extraFlags.h"
 
-typedef struct {
-    u32 length;
-    u8 *buffer;
-    u8 *pos;
-    u8 *end;
-} Stream;
+}
 
-u8 *broadwayCreateStream(u32 length);
+class Stream {
+public:
+    Stream();
+    ~Stream();
 
-u8* getFrame(u32* outImageWidth, u32* outImageHeight);
+    u8* GetFrame(u32* outImageWidth, u32* outImageHeight);
+    u32 Init();
+    void SetStream(u8* strmBuffer, u32 strmLength);
+    u32 BroadwayDecode();
 
-void broadwayPlayStream(u32 length);
+private:
+    u8 *streamBuffer = NULL;
 
+    H264SwDecInst decInst;
+    H264SwDecInput decInput;
+    H264SwDecOutput decOutput;
+    H264SwDecPicture decPicture;
+    H264SwDecInfo decInfo;
 
-u32 broadwayInit();
+    u32 picDecodeNumber;
+    u32 picDisplayNumber;
+    u32 picSize;
+};
 
-void setStream(Stream stream);
-
-extern void broadwayOnHeadersDecoded();
-
-extern void broadwayOnPictureDecoded(u8 *buffer, u32 width, u32 height);
-
-u32 broadwayDecode();
-
-void broadwayExit();
-
-u8 *broadwayCreateStreamBuffer(u32 size);
 
 u32 broadwayGetMajorVersion();
 
 u32 broadwayGetMinorVersion();
-
