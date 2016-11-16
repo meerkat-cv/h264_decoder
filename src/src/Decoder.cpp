@@ -67,17 +67,18 @@ u32 Stream::Init() {
 }
 
 
-u32 Stream::BroadwayDecode() {
+StreamStatus Stream::BroadwayDecode() {
     decInput.picId = picDecodeNumber;
 
     H264SwDecRet ret = H264SwDecDecode(decInst, &decInput, &decOutput);
+    StreamStatus status;
 
     switch (ret) {
         case H264SWDEC_HDRS_RDY_BUFF_NOT_EMPTY:
-            /* Stream headers were successfully decoded, thus stream information is available for query now. */
+            // Stream headers were successfully decoded, thus stream information is available for query now. 
             ret = H264SwDecGetInfo(decInst, &decInfo);
             if (ret != H264SWDEC_OK) {
-                return -1;
+                return STREAM_ERROR;
             }
 
             picSize = decInfo.picWidth * decInfo.picHeight;
@@ -86,18 +87,15 @@ u32 Stream::BroadwayDecode() {
             decInput.dataLen -= decOutput.pStrmCurrPos - decInput.pStream;
             decInput.pStream = decOutput.pStrmCurrPos;
 
-            // broadwayStream.mid_stream = broadwayStream.mid_stream;
-
             break;
 
         case H264SWDEC_PIC_RDY_BUFF_NOT_EMPTY:
-            /* Picture is ready and more data remains in the input buffer,
-             * update input structure.
-             */
+            // Picture is ready and more data remains in the input buffer,
+            // update input structure.
             decInput.dataLen -= decOutput.pStrmCurrPos - decInput.pStream;
             decInput.pStream = decOutput.pStrmCurrPos;
 
-            /* fall through */
+            // fall through 
 
         case H264SWDEC_PIC_RDY:
             picDecodeNumber++;
@@ -105,18 +103,42 @@ u32 Stream::BroadwayDecode() {
             while (H264SwDecNextPicture(decInst, &decPicture, 0) == H264SWDEC_PIC_RDY) {
                 // picDisplayNumber++;
             }
+
             break;
 
-      case H264SWDEC_STRM_PROCESSED:
-      case H264SWDEC_STRM_ERR:
-        /* Input stream was decoded but no picture is ready, thus get more data. */
-        decInput.dataLen = 0;
-        break;
-      
-      default:
-        break;
+        case H264SWDEC_STRM_PROCESSED:
+        case H264SWDEC_STRM_ERR:
+            // Input stream was decoded but no picture is ready, thus get more data. 
+            decInput.dataLen = 0;
+            break;
+              
+        default:
+            break;
     }
-  return ret;
+
+    switch (ret) {
+        case H264SWDEC_HDRS_RDY_BUFF_NOT_EMPTY:
+            status = HEADERS_READY;
+            break;
+
+        case H264SWDEC_PIC_RDY_BUFF_NOT_EMPTY:
+            status = PIC_READY_BUFFER_NOT_EMPTY;
+
+        case H264SWDEC_PIC_RDY:
+            status = PIC_READY;
+            break;
+
+        case H264SWDEC_STRM_PROCESSED:
+            status = STREAM_ENDED;
+            break;
+
+        case H264SWDEC_STRM_ERR:
+            status = STREAM_ERROR;
+            break;
+    }
+
+
+  return status;
 }
 
 

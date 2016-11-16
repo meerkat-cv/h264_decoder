@@ -61,19 +61,14 @@ int main(int argc, char* argv[]) {
         std::cout << "About to play: " << strmLen << std::endl;
         bool streaming = true;
         do {
-            u32 ret = s.BroadwayDecode();
+            StreamStatus ret = s.BroadwayDecode();
             switch (ret) {
-                case H264SWDEC_HDRS_RDY_BUFF_NOT_EMPTY:
-                    /* Stream headers were successfully decoded, thus stream information is available for query now. */
+                case HEADERS_READY:
                     break;
 
-                case H264SWDEC_PIC_RDY_BUFF_NOT_EMPTY:
-                    //  Picture is ready and more data remains in the input buffer,
-                    //  update input structure.
-                     
+                case PIC_READY_BUFFER_NOT_EMPTY:
                     // fall through
-
-                case H264SWDEC_PIC_RDY:
+                case PIC_READY:
                     {
                         u32 height, width;
                         u8* img_data;
@@ -84,13 +79,11 @@ int main(int argc, char* argv[]) {
                         }
                         
                         cv::Mat img_buffer(height+height/2, width, CV_8UC1, (uchar *)img_data);
-
                         // if you want only grayscale you can directly get only Y. And if you want the
                         // cr and cb channels separated, here you go
                         // cv::Mat Y(height, width, CV_8UC1, (uchar *)img_data);
                         // cv::Mat cb(height/2, width/2, CV_8UC1, (uchar *)(img_data+height*width));
                         // cv::Mat cr(height/2, width/2, CV_8UC1, (uchar *)(img_data+height*width+(height/2)*(width/2)));
-                        
                         cv::Mat original;
                         cv::cvtColor(img_buffer, original, cv::COLOR_YUV2RGB_YV12);
                         cv::imshow("Original", original);
@@ -99,10 +92,9 @@ int main(int argc, char* argv[]) {
                         break;
                     }
 
-                case H264SWDEC_STRM_PROCESSED:
+                case STREAM_ERROR:
                     // fall through
-                case H264SWDEC_STRM_ERR:
-                    // Input stream was decoded but no picture is ready, thus get more data. 
+                case STREAM_ENDED:
                     streaming = false;
                     break;
                   

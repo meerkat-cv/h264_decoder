@@ -14,6 +14,15 @@ extern "C" {
 
 }
 
+// This is just H264SwDecRet with clearer names
+enum StreamStatus {
+    HEADERS_READY              = 0, // Stream headers were successfully decoded, thus stream information is available for query now
+    PIC_READY                  = 1, // Picture is ready and no more data is on buffer
+    PIC_READY_BUFFER_NOT_EMPTY = 2, // Picture is ready and more data remains in the input buffer
+    STREAM_ENDED               = 3, // Input stream was decoded but no picture is ready, thus get more data
+    STREAM_ERROR               = 4  // Internal stream error
+};
+
 class Stream {
 public:
     Stream();
@@ -22,7 +31,7 @@ public:
     u8* GetFrame(u32* outImageWidth, u32* outImageHeight);
     u32 Init();
     void SetStream(u8* strmBuffer, u32 strmLength);
-    u32 BroadwayDecode();
+    StreamStatus BroadwayDecode();
 
 private:
     u8 *streamBuffer = NULL;
