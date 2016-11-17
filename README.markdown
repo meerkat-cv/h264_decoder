@@ -13,10 +13,10 @@ Hope you like it :)
 
 ### Warnings
 
-This was done on a real tight deadline, so there are some problems/limitations that you must be aware. Some of them:
+This was done on a real tight deadline, so it is quite possible that you find some problems/limitations when using this code. We encourage you to open a new Issue relating your problems, so that everyone will be aware of. And better yet, you may do a pull request.
 
-* The video must be in color
-* The code interface should be improved
+If you submit a pull request, please try to follow the code style of each particular file. There are code in here from (at least) two other repositories/authors, but we don't think it is a good idea to mix different coding styles in the same file.
+
 
 ### Compilation
 
