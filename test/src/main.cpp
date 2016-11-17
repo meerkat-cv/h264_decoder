@@ -9,11 +9,7 @@
 #include <Decoder.h>
 
 int main(int argc, char* argv[]) {
-	u8 *streamStop = NULL;
-    H264SwDecInput decInput;
-
-
-    std::cout << std::endl << std::endl;
+	std::cout << std::endl << std::endl;
     std::cout << "ooo        ooooo                              oooo                      .   "     << std::endl;
     std::cout << "`88.       .888'                              `888                    .o8   "     << std::endl;
     std::cout << " 888b     d'888   .ooooo.   .ooooo.  oooo d8b  888  oooo   .oooo.   .o888oo "     << std::endl;
