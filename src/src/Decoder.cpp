@@ -11,32 +11,44 @@ Stream::~Stream() {
 }
 
 void Stream::SetStream(u8* strmBuffer, u32 strmLength) {
-    decInput.pStream = strmBuffer;
+    u8* new_buffer = new u8[strmLength];
+    if (new_buffer == NULL) {
+        DEBUG(("UNABLE TO ALLOCATE MEMORY\n"));
+        exit(1);
+    }
+    
+    memcpy(new_buffer, strmBuffer, strmLength);
+    streamBuffer     = new_buffer;
+    decInput.pStream = new_buffer;
     decInput.dataLen = strmLength;
+    currPackagePos   = 0;
+    bufferSize       = strmLength;
 }
 
-// void Stream::UpdateStream(u32 strmLen, u8* strmBuffer, u8* strmPos, u8* strmEnd) {
-    // u32 new_buffer_size = broadwayStream.length - broadwayStream.mid_stream + strmLen;
-    // u8* new_buffer = new u8[new_buffer_size];
-    // if (new_buffer == NULL) {
-    //     DEBUG(("UNABLE TO ALLOCATE MEMORY\n"));
-    //     exit(1);
-    // }
-    // // using mid_stream to discard the past stream package. Otherwise we would just keep on growing
-    // // the buffer
-    // u32 last_package_size = broadwayStream.length-broadwayStream.mid_stream;
-    // memcpy(new_buffer, broadwayStream.buffer+broadwayStream.mid_stream, last_package_size);
-    // memcpy(new_buffer+last_package_size, strmBuffer, strmLen);
-    // free(broadwayStream.buffer);
-    // broadwayStream.buffer = new_buffer;
 
-    // broadwayStream.pos -= broadwayStream.mid_stream;
-    // broadwayStream.length = last_package_size + strmLen;
-    // broadwayStream.end = broadwayStream.buffer+broadwayStream.length;
+void Stream::UpdateStream(u8* strmBuffer, u32 strmLength) {
+    u32 new_buffer_size = bufferSize - currPackagePos + strmLength;
+    u8* new_buffer = new u8[new_buffer_size];
+    if (new_buffer == NULL) {
+        DEBUG(("UNABLE TO ALLOCATE MEMORY\n"));
+        exit(1);
+    }
 
-    // decInput.pStream = broadwayStream.buffer;
-    // decInput.dataLen = broadwayStream.length;   
- // }
+    u32 last_package_size = bufferSize-currPackagePos;
+    // keep the current package that is being processed
+    memcpy(new_buffer, streamBuffer+currPackagePos, last_package_size);
+    // and add the new one
+    memcpy(new_buffer+last_package_size, strmBuffer, strmLength);
+    free(streamBuffer);
+    streamBuffer = new_buffer;
+
+    bufferSize = new_buffer_size;
+    currPackagePos = 0;
+
+    // Update the decoder input buffer
+    decInput.pStream = streamBuffer;
+    decInput.dataLen = new_buffer_size;   
+}
 
 
 u8* Stream::GetFrame(u32* outImageWidth, u32* outImageHeight) {
@@ -95,9 +107,15 @@ StreamStatus Stream::BroadwayDecode() {
             decInput.dataLen -= decOutput.pStrmCurrPos - decInput.pStream;
             decInput.pStream = decOutput.pStrmCurrPos;
 
-            // fall through 
+            currPackagePos = bufferSize - decInput.dataLen;
+            picDecodeNumber++;
+
+            while (H264SwDecNextPicture(decInst, &decPicture, 0) == H264SWDEC_PIC_RDY) { }
+
+            break;
 
         case H264SWDEC_PIC_RDY:
+            currPackagePos = bufferSize;
             picDecodeNumber++;
       
             while (H264SwDecNextPicture(decInst, &decPicture, 0) == H264SWDEC_PIC_RDY) { }
@@ -107,7 +125,7 @@ StreamStatus Stream::BroadwayDecode() {
         case H264SWDEC_STRM_PROCESSED:
         case H264SWDEC_STRM_ERR:
             // Input stream was decoded but no picture is ready, thus get more data. 
-            decInput.dataLen = 0;
+            // decInput.dataLen = 0;
             break;
               
         default:
