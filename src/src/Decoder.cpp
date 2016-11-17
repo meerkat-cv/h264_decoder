@@ -113,6 +113,8 @@ StreamStatus Stream::BroadwayDecode() {
         case H264SWDEC_PIC_RDY:
             currPackagePos = bufferSize;
             picDecodeNumber++;
+
+            decInput.dataLen = 0;
       
             while (H264SwDecNextPicture(decInst, &decPicture, 0) == H264SWDEC_PIC_RDY) { }
 
