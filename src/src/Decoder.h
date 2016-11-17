@@ -29,7 +29,6 @@ public:
     ~Stream();
 
     u8* GetFrame(u32* outImageWidth, u32* outImageHeight);
-    u32 Init();
     void SetStream(u8* strmBuffer, u32 strmLength);
     void UpdateStream(u8* strmBuffer, u32 strmLength);
     StreamStatus BroadwayDecode();

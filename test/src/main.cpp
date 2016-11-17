@@ -30,7 +30,6 @@ int main(int argc, char* argv[]) {
     }
 
     Stream s;
-    s.Init();
 
     for(int part=0; part<argc-1; part++) {
         FILE *finput;
@@ -73,12 +72,10 @@ int main(int argc, char* argv[]) {
         bool streaming = true;
         u32 height, width;
         u8* img_data;
+        // consuming all the data from argv[part+1]
         do {
             StreamStatus ret = s.BroadwayDecode();
             switch (ret) {
-                case HEADERS_READY:
-                    break;
-
                 case PIC_READY_BUFFER_NOT_EMPTY:
                     img_data = s.GetFrame(&width, &height);
                     break;
@@ -89,7 +86,6 @@ int main(int argc, char* argv[]) {
                     break;
 
                 case STREAM_ERROR:
-                    // fall through
                 case STREAM_ENDED:
                     streaming = false;
                     break;

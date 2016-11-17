@@ -1,7 +1,23 @@
 #include "Decoder.h"
 
 Stream::Stream() {
+    H264SwDecRet ret;
+#ifdef DISABLE_OUTPUT_REORDERING
+    u32 disableOutputReordering = 1;
+#else
+    u32 disableOutputReordering = 0;
+#endif
 
+    // Initialize decoder instance. 
+    ret = H264SwDecInit(&decInst, disableOutputReordering);
+    if (ret != H264SWDEC_OK) {
+        // TODO: stop this Stream object from trying to decode any video!
+        // Perhaps use a flag to indicate that the initialization was successful?
+        DEBUG(("DECODER INITIALIZATION FAILED\n"));
+        return;
+    }
+
+    picDecodeNumber = 1;
 }
 
 Stream::~Stream() {
@@ -56,26 +72,6 @@ u8* Stream::GetFrame(u32* outImageWidth, u32* outImageHeight) {
     *outImageHeight = decInfo.picHeight;
 
     return (u8*)decPicture.pOutputPicture;
-}
-
-
-u32 Stream::Init() {
-  H264SwDecRet ret;
-#ifdef DISABLE_OUTPUT_REORDERING
-  u32 disableOutputReordering = 1;
-#else
-  u32 disableOutputReordering = 0;
-#endif
-
-  /* Initialize decoder instance. */
-  ret = H264SwDecInit(&decInst, disableOutputReordering);
-  if (ret != H264SWDEC_OK) {
-    DEBUG(("DECODER INITIALIZATION FAILED\n"));
-    return -1;
-  }
-
-  picDecodeNumber = 1;
-  return 0;
 }
 
 
