@@ -6,7 +6,7 @@ find_package( OpenCV 3.1.0 EXACT REQUIRED )
 
 # I am assuming that the builds starts at build/ folder
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/lib/)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -std=c++1y -fPIC -O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 INCLUDE_DIRECTORIES("../src/src/"
 					"../src/inc/")
