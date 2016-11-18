@@ -95,6 +95,9 @@ StreamStatus Stream::BroadwayDecode() {
             decInput.dataLen -= decOutput.pStrmCurrPos - decInput.pStream;
             decInput.pStream = decOutput.pStrmCurrPos;
 
+            // Try to decode again to get a picture. The user is not interested on the Headers info...
+            return BroadwayDecode();
+
             break;
 
         case H264SWDEC_PIC_RDY_BUFF_NOT_EMPTY:
@@ -131,14 +134,7 @@ StreamStatus Stream::BroadwayDecode() {
     }
 
     switch (ret) {
-        case H264SWDEC_HDRS_RDY_BUFF_NOT_EMPTY:
-        case H264SWDEC_OK:
-            status = HEADERS_READY;
-            break;
-
         case H264SWDEC_PIC_RDY_BUFF_NOT_EMPTY:
-            status = PIC_READY_BUFFER_NOT_EMPTY;
-
         case H264SWDEC_PIC_RDY:
             status = PIC_READY;
             break;

@@ -72,10 +72,6 @@ int main(int argc, char* argv[]) {
         do {
             StreamStatus ret = s.BroadwayDecode();
             switch (ret) {
-                case PIC_READY_BUFFER_NOT_EMPTY:
-                    img_data = s.GetFrame(&width, &height);
-                    break;
-
                 case PIC_READY:
                     img_data = s.GetFrame(&width, &height);
                     break;
@@ -90,7 +86,7 @@ int main(int argc, char* argv[]) {
             }
 
             // Is there any new frame?
-            if (ret == PIC_READY || ret == PIC_READY_BUFFER_NOT_EMPTY) {
+            if (ret == PIC_READY) {
                 if(img_data == NULL) {
                     std::cout << "Image data is NULL" << std::endl;
                     break;
