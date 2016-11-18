@@ -109,7 +109,7 @@ StreamStatus Stream::BroadwayDecode() {
             currPackagePos = bufferSize - decInput.dataLen;
             picDecodeNumber++;
 
-            while (H264SwDecNextPicture(decInst, &decPicture, 0) == H264SWDEC_PIC_RDY) { }
+            while (H264SwDecNextPicture(decInst, &decPicture, 1) == H264SWDEC_PIC_RDY) { }
 
             break;
 
@@ -117,9 +117,10 @@ StreamStatus Stream::BroadwayDecode() {
             currPackagePos = bufferSize;
             picDecodeNumber++;
 
-            decInput.dataLen = 0;
-      
-            while (H264SwDecNextPicture(decInst, &decPicture, 0) == H264SWDEC_PIC_RDY) { }
+            decInput.dataLen -= decOutput.pStrmCurrPos - decInput.pStream;
+            currPackagePos = bufferSize - decInput.dataLen;
+            
+            while (H264SwDecNextPicture(decInst, &decPicture, 1) == H264SWDEC_PIC_RDY) { }
 
             break;
 
