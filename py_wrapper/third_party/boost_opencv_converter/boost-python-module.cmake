@@ -1,9 +1,10 @@
 function(boost_python_module_py3 NAME)
-  
+
+  #link_directories("../../../../third_party/boost_155/")
   if(APPLE)
     set(BOOSTPY_LIB "boost_python3")
   else()
-    set(BOOSTPY_LIB "boost_python-py34")
+    set(BOOSTPY_LIB "boost_python-py35")
   endif()
 
 

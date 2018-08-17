@@ -8,13 +8,13 @@ if(APPLE)
 	set(PYTHON_LIBRARIES
 		"/usr/local/Cellar/python3/3.5.1/Frameworks/Python.framework/Versions/3.5/lib/libpython3.5.dylib")
 else()
-	set(PYTHON_INCLUDE_DIRS "/usr/include/python3.4m/")
-	set(PYTHON_LIBRARIES "/usr/lib/x86_64-linux-gnu/libpython3.4m.so")
+	set(PYTHON_INCLUDE_DIRS "/usr/include/python3.5m/")
+	set(PYTHON_LIBRARIES "/usr/lib/x86_64-linux-gnu/libpython3.5m.so")
 endif()
 	
 
 FIND_PACKAGE(Boost COMPONENTS python)
-find_package( OpenCV 3.1.0 EXACT REQUIRED )
+find_package(OpenCV  REQUIRED )
 
 find_package(PkgConfig REQUIRED)
 include(third_party/boost_opencv_converter/boost-python-module.cmake)
@@ -43,7 +43,7 @@ find_library(CONVERTER_LIB NAMES boost_opencv_converter.so
 if(APPLE)
 	set(BOOSTPY_LIB "boost_python3")
 else()
-	set(BOOSTPY_LIB "boost_python-py34")
+	set(BOOSTPY_LIB "boost_python-py35")
 endif()
 
 boost_python_module_py3(h264_decoder src/h264_decoder_py.cpp)
